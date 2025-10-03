@@ -1,46 +1,69 @@
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
+from sklearn.cluster import DBSCAN
 import matplotlib.pyplot as plt
+import seaborn as sns
 
-# Caminho para o CSV
-csv_path = "frames_dataset.csv"   # troque pelo nome do seu arquivo
-
-# Ler CSV
+# -------------------------------
+# 1. Carregar dados
+# -------------------------------
+csv_path = "frames_dataset.csv"
 df = pd.read_csv(csv_path, header=0)
 
-# Garantir que colunas sejam numéricas (exceto 'movie')
-for col in df.columns:
-    if col != "movie":
-        df[col] = pd.to_numeric(df[col], errors="coerce")
+# -------------------------------
+# 2. Selecionar colunas numéricas
+# -------------------------------
+features = ["mean_r", "mean_g", "mean_b", "mean_saturation",
+            "mean_luminosity", "contrast", "temp_color", "Laplacian_variance"]
 
-# Separar atributos numéricos
-X = df.drop(columns=["movie"])
-X = X.drop(columns=["path"])
-X = X.dropna()
+# -------------------------------
+# 3. Remover linhas não numéricas
+# -------------------------------
+for col in features:
+    df = df[pd.to_numeric(df[col], errors='coerce').notna()]
 
-# Normalizar
+# -------------------------------
+# 4. Converter para float
+# -------------------------------
+for col in features:
+    df[col] = df[col].astype(float)
+
+X = df[features].values
+
+# -------------------------------
+# 5. Normalizar dados
+# -------------------------------
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
-# PCA para 2 dimensões
+# -------------------------------
+# 6. DBSCAN no espaço original
+# -------------------------------
+dbscan = DBSCAN(eps=2.0, min_samples=5)
+clusters = dbscan.fit_predict(X_scaled)
+df['cluster'] = clusters
+
+# -------------------------------
+# 7. PCA apenas para visualização
+# -------------------------------
 pca = PCA(n_components=2)
 X_pca = pca.fit_transform(X_scaled)
 
-# Criar DataFrame com resultado
-df_pca = pd.DataFrame(X_pca, columns=["PC1", "PC2"])
-df_pca["movie"] = df["movie"]
-
-# Plot colorido por filme
-plt.figure(figsize=(8,6))
-movies = df_pca["movie"].unique()  # lista de filmes únicos
-for movie in movies:
-    subset = df_pca[df_pca["movie"] == movie]
-    plt.scatter(subset["PC1"], subset["PC2"], alpha=0.7, label=movie)
-
-plt.xlabel("PC1")
-plt.ylabel("PC2")
-plt.title("PCA - Redução para 2D")
-plt.legend()
-plt.grid(True)
+# -------------------------------
+# 8. Visualização
+# -------------------------------
+plt.figure(figsize=(10,7))
+palette = sns.color_palette("hsv", len(set(clusters)))
+sns.scatterplot(x=X_pca[:,0], y=X_pca[:,1], hue=clusters, palette=palette, legend='full')
+plt.title("DBSCAN clustering das cenas (PCA 2D apenas para visualização)")
+plt.xlabel("PCA 1")
+plt.ylabel("PCA 2")
 plt.show()
+
+# -------------------------------
+# 9. Análise básica
+# -------------------------------
+num_clusters = len(set(clusters)) - (1 if -1 in clusters else 0)
+print("Número de clusters encontrados (excluindo outliers):", num_clusters)
+print(df.groupby('cluster')['movie'].value_counts())
