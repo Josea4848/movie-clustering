@@ -21,6 +21,7 @@ scenedetect==0.6.7
 scikit-image==0.25.2
 scikit-learn==1.7.2
 scipy==1.16.2
+seaborn==0.13.2
 six==1.17.0
 threadpoolctl==3.6.0
 tifffile==2025.9.30
