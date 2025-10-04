@@ -1,4 +1,4 @@
-from AtributteExtractor import extract_all
+from AtributteExtractor import extract_visual_features
 import os
 import pandas as pd
 from time import sleep
@@ -25,6 +25,7 @@ def exportData():
         
         # Ignora o filme se já estiver cadastrado
         if exists:
+            print(f"Filme ignorado: {movie}")
             continue
 
         for file in files:
@@ -33,7 +34,7 @@ def exportData():
 
             if extension.lower() == ".jpg":  
                 try:
-                    data = extract_all(frame_path)
+                    data = extract_visual_features(frame_path)
                     data["movie"] = movie
                     data["path"] = frame_path     
                     df = pd.DataFrame([data])          
