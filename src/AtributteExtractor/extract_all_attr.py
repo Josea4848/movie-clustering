@@ -2,7 +2,17 @@ import cv2
 import numpy as np
 from skimage.measure import shannon_entropy
 
-def extract_visual_features(img_path, k=3):
+def extract_visual_features(img_path) -> dict[str, float]:
+    """
+    Extrai atributos visuais de uma imagem.
+    
+    Args:
+        img_path (str): path da imagem a ser processada.
+
+    Returns:
+        dict[str, float]: Dicionário com valores para os atributos
+    """
+
 
     img = cv2.imread(img_path)
     if img is None:
@@ -32,18 +42,6 @@ def extract_visual_features(img_path, k=3):
     # NITIDEZ
     lap_var = cv2.Laplacian(gray, cv2.CV_64F).var()
 
-    # # MATIZ DOMINANTE
-    # mask = S > 0.2
-    # h_vals = H[mask].reshape(-1, 1)
-    # if len(h_vals) > 0:
-    #     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 20, 1.0)
-    #     compactness, labels, centers = cv2.kmeans(h_vals.astype(np.float32), k, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
-    #     # MAIOR CLUSTER
-    #     counts = np.bincount(labels.flatten())
-    #     dominant_hue = centers[np.argmax(counts)][0]
-    # else:
-    #     dominant_hue = float('nan')
-
     # DENSIDADE DE BORDAS
     edges = cv2.Canny(gray, 100, 200)
     edge_density = np.sum(edges > 0) / edges.size
@@ -58,7 +56,6 @@ def extract_visual_features(img_path, k=3):
         'contrast': float(contrast),
         'temperature': float(temperature),
         'sharpness': float(lap_var),
-        #'dominant_hue': float(dominant_hue),
         'edge_density': float(edge_density),
         'entropy': float(entropy)
     }

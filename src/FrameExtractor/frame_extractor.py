@@ -1,5 +1,4 @@
 import os
-import sys
 import cv2
 import numpy as np
 import pandas as pd
@@ -21,7 +20,7 @@ def remove_black_bars(img, thresh=10):
     
     # Soma ao longo das linhas (horizontal)
     row_sum = np.mean(gray, axis=1)
-    top = np.argmax(row_sum > thresh)          # primeira linha não-preta
+    top = np.argmax(row_sum > thresh)          
     bottom = len(row_sum) - np.argmax(row_sum[::-1] > thresh) - 1
     
     # Soma ao longo das colunas (vertical)

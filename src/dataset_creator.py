@@ -3,6 +3,43 @@ import os
 import pandas as pd
 from time import sleep
 
+def getDirectorMap() -> dict[str, str]:
+    """
+    Retorna um dicionário para mapeamento do diretor para cada filme
+
+    Returns:
+        dict[str, str]: mapa diretor para filme
+    """
+
+    # Mapeamento manual dos diretores
+    movie_to_director = {
+        "Batman1989": "Tim Burton",
+        "BatmanReturns1992": "Tim Burton",
+        "SleepyHollow1999": "Tim Burton",
+        "AllAboutMyMother1999": "Pedro Almodóvar",
+        "Volver2006": "Pedro Almodóvar",
+        "WomenOnTheVergeOfANervousBreakdown1988": "Pedro Almodóvar",
+        "TheTreeofLife2011": "Terrence Malick",
+        "KnightOfCups2015": "Terrence Malick",
+        "AHiddenLife2019": "Terrence Malick",
+        "20462004": "Wong Kar-Wai",
+        "InTheMoodForLove2000": "Wong Kar-Wai",
+        "DaysOfBeingWild1990": "Wong Kar-Wai",
+        "RhapsodyInAugust1991": "Akira Kurosawa",
+        "Dreams1990": "Akira Kurosawa",
+        "Madadayo1993": "Akira Kurosawa",
+        "EliteSquad2007": "José Padilha",
+        "EliteSquad2TheEnemyWithin2010": "José Padilha",
+        "TheBirds1963": "Alfred Hitchcock",
+        "NorthByNorthwest1959": "Alfred Hitchcock",
+        "OnceUponaTimeintheWest1968": "Sergio Leone", 
+        "MadMaxFuryRoad2015": "George Miller"
+    }
+
+    return movie_to_director
+
+
+
 def exportData():
     dir = "Output"
     output_csv = "frames_dataset.csv"
@@ -42,6 +79,10 @@ def exportData():
                     first = False
                 except Exception as e:
                     print(f"Erro ao processar {frame_path}: {e}")
+
+    # Mapea diretores para cada filme
+    df = pd.read_csv(output_csv)
+    df["director"] = df["movie"].map(getDirectorMap())
 
 if __name__ == "__main__":
     exportData()
