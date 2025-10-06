@@ -83,6 +83,7 @@ def exportData():
     # Mapea diretores para cada filme
     df = pd.read_csv(output_csv)
     df["director"] = df["movie"].map(getDirectorMap())
+    df.to_csv(output_csv)
 
 if __name__ == "__main__":
     exportData()
