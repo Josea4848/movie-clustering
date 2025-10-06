@@ -1,6 +1,7 @@
 import cv2
 import os
-import matplotlib as plt
+import numpy as np
+import matplotlib.pyplot as plt
 
 def visualize_selected_frames(result_df, num_frames_per_movie=5, base_path=""):
     """

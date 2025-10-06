@@ -74,7 +74,7 @@ def getScenes(N : int, filter_movies : list, csv_path="frames_dataset.csv",):
 
 def main():
     print("Extraindo frames mais significativos...")
-    result = getScenes(300)
+    result = getScenes(300, ["Batman1989", "BatmanReturns1992", "MadMaxFuryRoad2015"])
     print(f"Extração concluída")
     print(f"Total de frames selecionados: {len(result)}")
     print(f"Distribuição por filme: {result['movie'].value_counts()}")
@@ -91,7 +91,7 @@ def main():
     X_scaled = scaler.fit_transform(X)
 
     # KMeans
-    kmeans = KMeans(n_clusters=3, random_state=42, n_init=10)
+    kmeans = KMeans(n_clusters=2, random_state=42, n_init=10)
     result["kmeans_cluster"] = kmeans.fit_predict(X_scaled)
 
     # PCA 2D
